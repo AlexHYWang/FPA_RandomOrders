@@ -57,6 +57,18 @@
         let drawnNumbers = [];
         let participants = [];
 
+        window.onload = function() {
+            if (localStorage.getItem('totalCount')) {
+                totalCount = parseInt(localStorage.getItem('totalCount'));
+                drawnNumbers = JSON.parse(localStorage.getItem('drawnNumbers')) || [];
+                participants = JSON.parse(localStorage.getItem('participants')) || [];
+                if (totalCount > 0) {
+                    document.getElementById('drawSection').style.display = 'block';
+                    updateResults();
+                }
+            }
+        };
+
         function setTotalCount() {
             totalCount = parseInt(document.getElementById('totalCount').value);
             if (totalCount > 0) {
@@ -65,6 +77,9 @@
                 participants = [];
                 document.getElementById('result').innerHTML = '';
                 document.getElementById('totalCount').value = '';
+                localStorage.setItem('totalCount', totalCount);
+                localStorage.setItem('drawnNumbers', JSON.stringify(drawnNumbers));
+                localStorage.setItem('participants', JSON.stringify(participants));
             } else {
                 alert('请输入有效的总人数');
             }
@@ -93,6 +108,25 @@
             drawnNumbers.push(drawnNumber);
             participants.push(nameInput);
 
+            localStorage.setItem('drawnNumbers', JSON.stringify(drawnNumbers));
+            localStorage.setItem('participants', JSON.stringify(participants));
+
+            updateResults();
+            document.getElementById('name').value = '';
+        }
+
+        function clearInput() {
+            document.getElementById('name').value = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('timestamp').innerText = '';
+            drawnNumbers = [];
+            participants = [];
+            localStorage.removeItem('totalCount');
+            localStorage.removeItem('drawnNumbers');
+            localStorage.removeItem('participants');
+        }
+
+        function updateResults() {
             let resultHtml = `<table>
                 <tr>
                     <th>姓名</th>
@@ -109,15 +143,6 @@
 
             const currentTime = new Date().toLocaleString();
             document.getElementById('timestamp').innerText = `抽签结果生成时间：${currentTime}`;
-            document.getElementById('name').value = '';
-        }
-
-        function clearInput() {
-            document.getElementById('name').value = '';
-            document.getElementById('result').innerHTML = '';
-            document.getElementById('timestamp').innerText = '';
-            drawnNumbers = [];
-            participants = [];
         }
     </script>
 </body>
